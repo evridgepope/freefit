@@ -1,0 +1,1 @@
+made by Sebastian Evridge Pope. this is a free app i made to remove any excuse for me not to go to the gym or diet properly. at time of writing i have nowhere near the skills to actually make the app that i envision: if this is ever of any use to anyone besides myself i'd be shocked but glad.
