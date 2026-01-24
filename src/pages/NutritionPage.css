@@ -1,0 +1,103 @@
+.nutrition-page {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.secondary-nav {
+  display: flex;
+  background-color: var(--background);
+  border-bottom: 1px solid var(--border-color);
+  height: var(--secondary-nav-height);
+}
+
+.secondary-tab {
+  flex: 1;
+  background: none;
+  border: none;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-secondary);
+  position: relative;
+  transition: color 0.2s;
+}
+
+.secondary-tab.active {
+  color: var(--primary-color);
+}
+
+.secondary-tab.active::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background-color: var(--primary-color);
+}
+
+.secondary-tab:active {
+  opacity: 0.6;
+}
+
+.nutrition-content {
+  flex: 1;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.summary-container {
+  padding: 20px;
+}
+
+.summary-container h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.progress-item {
+  margin-bottom: 24px;
+}
+
+.progress-label {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+
+.progress-bar {
+  height: 8px;
+  background-color: var(--secondary-background);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background-color: var(--primary-color);
+  transition: width 0.3s ease, background-color 0.3s ease;
+}
+
+.progress-fill.low {
+  background-color: var(--error-color);
+}
+
+.progress-fill.medium {
+  background-color: var(--warning-color);
+}
+
+.progress-fill.good {
+  background-color: var(--success-color);
+}
+
+.progress-fill.high {
+  background-color: var(--warning-color);
+}
+
+.progress-value {
+  font-size: 14px;
+  color: var(--text-secondary);
+}

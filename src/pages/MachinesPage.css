@@ -1,0 +1,226 @@
+.machines-list {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.machine-count {
+  padding: 8px 16px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  background-color: var(--secondary-background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.machine-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+
+.machine-item.selected {
+  background-color: rgba(0, 122, 255, 0.05);
+}
+
+.machine-checkbox {
+  width: 24px;
+  height: 24px;
+  border: 2px solid var(--border-color);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: var(--primary-color);
+  font-weight: bold;
+  transition: all 0.2s;
+}
+
+.machine-item.selected .machine-checkbox {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.machine-info {
+  flex: 1;
+}
+
+.machine-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 2px;
+}
+
+.machine-variants {
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
+.info-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  padding: 8px;
+  cursor: pointer;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.info-btn:active {
+  opacity: 1;
+}
+
+.add-btn {
+  position: sticky;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  margin: 16px;
+  padding: 14px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  font-weight: 600;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.add-btn:active {
+  opacity: 0.8;
+}
+
+/* Modal styles */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 20px;
+}
+
+.modal-content {
+  background-color: var(--background);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.back-btn {
+  background: none;
+  border: none;
+  color: var(--primary-color);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 4px 8px;
+  margin-left: -8px;
+}
+
+.back-btn:active {
+  opacity: 0.6;
+}
+
+.modal-header h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.info-section {
+  margin-bottom: 24px;
+}
+
+.info-section:last-child {
+  margin-bottom: 0;
+}
+
+.info-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.variants-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.variants-list li {
+  padding: 8px 12px;
+  background-color: var(--secondary-background);
+  border-radius: 6px;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+.variants-list li:last-child {
+  margin-bottom: 0;
+}
+
+.exercises-list-modal {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.exercise-item-modal {
+  padding: 12px;
+  background-color: var(--secondary-background);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.exercise-item-modal:active {
+  background-color: var(--border-color);
+}
+
+.exercise-name-modal {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.exercise-meta-modal {
+  font-size: 13px;
+  color: var(--text-secondary);
+  text-transform: capitalize;
+}
+
+.no-exercises {
+  color: var(--text-secondary);
+  font-size: 14px;
+  font-style: italic;
+}
