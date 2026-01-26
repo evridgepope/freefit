@@ -1,0 +1,139 @@
+.anatomical-muscle-diagram {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+}
+
+.diagram-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.view-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background-color: var(--background);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.view-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.view-btn:active {
+  opacity: 0.7;
+}
+
+.diagram-container-anatomical {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  background-color: var(--background);
+  border-radius: 8px;
+  overflow: hidden;
+  padding: 8px;
+}
+
+.anatomical-svg {
+  width: 100%;
+  height: 100%;
+  max-height: 500px;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+.muscle-region-anatomical {
+  transition: all 0.2s ease;
+}
+
+.muscle-region-anatomical:hover {
+  filter: brightness(1.1);
+}
+
+.muscle-region-anatomical:active {
+  filter: brightness(0.9);
+  transform: scale(1.02);
+}
+
+.muscle-label-svg {
+  pointer-events: none;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', sans-serif;
+}
+
+.selected-muscle-label {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+}
+
+.highlighted-muscles {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: var(--background);
+  border-radius: 8px;
+  max-height: 140px;
+  overflow-y: auto;
+}
+
+.highlighted-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.muscle-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.muscle-chip-anatomical {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: rgba(255, 59, 48, 0.1);
+  color: var(--error-color);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+/* Scrollbar styling for muscle list */
+.highlighted-muscles::-webkit-scrollbar {
+  width: 4px;
+}
+
+.highlighted-muscles::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.highlighted-muscles::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+.highlighted-muscles::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

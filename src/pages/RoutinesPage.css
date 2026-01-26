@@ -4,30 +4,419 @@
   flex-direction: column;
 }
 
-.empty-state {
-  flex: 1;
+.routine-detail,
+.day-detail {
+  height: 100%;
   display: flex;
   flex-direction: column;
+  overflow-y: auto;
+}
+
+.add-btn-header {
+  width: 40px;
+  height: 40px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 24px;
+  font-weight: 300;
+  display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 20px;
-  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
 }
 
-.empty-icon {
-  font-size: 64px;
-  margin-bottom: 16px;
-  opacity: 0.3;
+.add-btn-header:active {
+  opacity: 0.8;
 }
 
-.empty-text {
-  font-size: 18px;
+.add-btn-fixed {
+  position: sticky;
+  bottom: 16px;
+  left: 16px;
+  right: 16px;
+  margin: 16px;
+  padding: 14px;
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
   font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 8px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
-.empty-hint {
+.add-btn-fixed:active {
+  opacity: 0.8;
+}
+
+.routine-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.routine-info {
+  flex: 1;
+}
+
+.routine-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.routine-meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.chevron {
+  font-size: 24px;
+  color: var(--text-secondary);
+  font-weight: 300;
+}
+
+.routine-name-input {
+  flex: 1;
+  font-size: 20px;
+  font-weight: 700;
+  border: none;
+  background: transparent;
+  padding: 8px;
+  margin: 0 8px;
+}
+
+.routine-name-input:focus {
+  background-color: var(--secondary-background);
+  border-radius: 4px;
+}
+
+.delete-btn-icon {
+  background: none;
+  border: none;
+  font-size: 20px;
+  padding: 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+}
+
+.delete-btn-icon:active {
+  opacity: 1;
+}
+
+.volume-summary {
+  padding: 16px;
+  background-color: var(--secondary-background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.volume-summary h3 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.volume-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.volume-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background-color: var(--background);
+  border-radius: 6px;
+}
+
+.muscle-name {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.volume-sets {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--primary-color);
+}
+
+.no-volume {
   font-size: 14px;
   color: var(--text-secondary);
+  font-style: italic;
+}
+
+.days-section,
+.exercises-section {
+  padding: 16px;
+}
+
+.days-section h3,
+.exercises-section h3 {
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+.days-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.day-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px;
+  background-color: var(--secondary-background);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.day-item:active {
+  background-color: var(--border-color);
+}
+
+.day-info {
+  flex: 1;
+}
+
+.day-title {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.day-meta {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.exercises-list-day {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 80px;
+}
+
+.exercise-item-day {
+  padding: 12px;
+  background-color: var(--secondary-background);
+  border-radius: 8px;
+}
+
+.exercise-name-day {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.exercise-sets-day {
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.empty-state-small {
+  text-align: center;
+  padding: 40px 20px;
+  color: var(--text-secondary);
+}
+
+.empty-state-small p {
+  font-size: 14px;
+  margin-bottom: 4px;
+}
+
+.empty-state-small .empty-hint {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+/* Modal styles */
+.modal-content-routine {
+  background-color: var(--background);
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 400px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content-routine h2 {
+  font-size: 22px;
+  font-weight: 700;
+  margin-bottom: 20px;
+}
+
+.modal-form {
+  margin-bottom: 24px;
+}
+
+.modal-form label {
+  display: block;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.number-input {
+  width: 100%;
+  font-size: 18px;
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.number-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 12px;
+}
+
+.modal-actions button {
+  flex: 1;
+}
+
+/* Exercise selection modal */
+.modal-content-exercise {
+  background-color: var(--background);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 500px;
+  max-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+  overflow: hidden;
+}
+
+.modal-header-sticky {
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background-color: var(--background);
+}
+
+.modal-header-sticky h2 {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 0;
+}
+
+.exercise-list-modal {
+  overflow-y: auto;
+  flex: 1;
+}
+
+.exercise-modal-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+/* Sets configuration */
+.sets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.set-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  background-color: var(--secondary-background);
+  border-radius: 8px;
+}
+
+.set-number {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 50px;
+}
+
+.set-input {
+  flex: 1;
+  font-size: 16px;
+  padding: 8px 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+}
+
+.set-input:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+.set-unit {
+  font-size: 13px;
+  color: var(--text-secondary);
+  min-width: 40px;
+}
+
+.remove-set-btn {
+  width: 28px;
+  height: 28px;
+  background-color: var(--error-color);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  font-size: 20px;
+  font-weight: 300;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.remove-set-btn:active {
+  opacity: 0.7;
+}
+
+.add-set-btn {
+  width: 100%;
+  padding: 10px;
+  background-color: transparent;
+  border: 2px dashed var(--border-color);
+  border-radius: 8px;
+  color: var(--primary-color);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.add-set-btn:hover {
+  border-color: var(--primary-color);
+  background-color: rgba(0, 122, 255, 0.05);
+}
+
+.add-set-btn:active {
+  transform: scale(0.98);
 }

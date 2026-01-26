@@ -1,0 +1,191 @@
+.image-muscle-diagram {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.diagram-view-toggle {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+  flex-shrink: 0;
+}
+
+.view-btn {
+  flex: 1;
+  padding: 8px 12px;
+  background-color: var(--background);
+  color: var(--text-secondary);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.view-btn.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+.view-btn:active {
+  opacity: 0.7;
+}
+
+.diagram-image-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: var(--background);
+  border-radius: 8px;
+  padding: 12px;
+  min-height: 0;
+}
+
+.image-wrapper {
+  position: relative;
+  width: 100%;
+  max-width: 400px;
+  aspect-ratio: 1 / 1.4;
+  margin: 0 auto;
+}
+
+/* Muscle anatomy image */
+.muscle-anatomy-image {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  border-radius: 8px;
+}
+
+/* Muscle overlay regions */
+.muscle-overlays {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.muscle-overlay {
+  position: absolute;
+  pointer-events: auto;
+  cursor: pointer;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+  /* Semi-transparent blue for positioning - easier to see placement */
+  background-color: rgba(0, 122, 255, 0.08);
+  border: 1px solid rgba(0, 122, 255, 0.15);
+}
+
+/* Hover state */
+.muscle-overlay:hover {
+  background-color: rgba(0, 122, 255, 0.15);
+  border-color: rgba(0, 122, 255, 0.4);
+}
+
+/* Highlighted state (muscle is worked by selected exercise) */
+.muscle-overlay.highlighted {
+  background-color: rgba(255, 59, 48, 0.35);
+  border-color: rgba(255, 59, 48, 0.6);
+  box-shadow: inset 0 0 20px rgba(255, 59, 48, 0.3);
+}
+
+.muscle-overlay.highlighted:hover {
+  background-color: rgba(255, 59, 48, 0.45);
+  border-color: rgba(255, 59, 48, 0.8);
+}
+
+/* Selected state (muscle is clicked for filtering) */
+.muscle-overlay.selected {
+  background-color: rgba(0, 122, 255, 0.45);
+  border-color: rgba(0, 122, 255, 0.8);
+  border-width: 3px;
+  box-shadow: inset 0 0 25px rgba(0, 122, 255, 0.4);
+  z-index: 10;
+}
+
+.muscle-overlay.selected:hover {
+  background-color: rgba(0, 122, 255, 0.55);
+}
+
+/* Label */
+.selected-muscle-label-image {
+  margin-top: 12px;
+  padding: 8px 16px;
+  background-color: var(--primary-color);
+  color: white;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: center;
+  box-shadow: 0 2px 8px rgba(0, 122, 255, 0.3);
+  flex-shrink: 0;
+}
+
+/* Highlighted muscles list */
+.highlighted-muscles-image {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: var(--background);
+  border-radius: 8px;
+  max-height: 120px;
+  overflow-y: auto;
+  flex-shrink: 0;
+}
+
+.highlighted-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.muscle-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.muscle-chip-image {
+  display: inline-block;
+  padding: 5px 10px;
+  background-color: rgba(255, 59, 48, 0.1);
+  color: var(--error-color);
+  border: 1px solid rgba(255, 59, 48, 0.3);
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+
+/* Scrollbar styling */
+.image-muscle-diagram::-webkit-scrollbar,
+.highlighted-muscles-image::-webkit-scrollbar {
+  width: 4px;
+}
+
+.image-muscle-diagram::-webkit-scrollbar-track,
+.highlighted-muscles-image::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.image-muscle-diagram::-webkit-scrollbar-thumb,
+.highlighted-muscles-image::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 2px;
+}
+
+.image-muscle-diagram::-webkit-scrollbar-thumb:hover,
+.highlighted-muscles-image::-webkit-scrollbar-thumb:hover {
+  background: var(--text-secondary);
+}

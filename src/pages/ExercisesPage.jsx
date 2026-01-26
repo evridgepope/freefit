@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import SplitLayout from '../components/SplitLayout'
-import MuscleDiagram from '../components/MuscleDiagram'
+import ImageMuscleDiagram from '../components/ImageMuscleDiagram'
 import { getAllExercises, getAllMachines } from '../utils/db'
 import { getSelectedMachines } from '../utils/storage'
 import { formatMuscleName } from '../utils/helpers'
@@ -272,7 +272,7 @@ const ExercisesPage = () => {
   )
 
   const rightContent = (
-    <MuscleDiagram
+    <ImageMuscleDiagram
       highlightedMuscles={getHighlightedMuscles()}
       onMuscleClick={handleMuscleClick}
       selectedMuscle={filters.muscle}

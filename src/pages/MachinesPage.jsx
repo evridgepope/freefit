@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import SplitLayout from '../components/SplitLayout'
-import MuscleDiagram from '../components/MuscleDiagram'
+import ImageMuscleDiagram from '../components/ImageMuscleDiagram'
 import { getAllMachines, getAllExercises } from '../utils/db'
 import { getSelectedMachines, setSelectedMachines } from '../utils/storage'
 import './MachinesPage.css'
@@ -90,7 +90,7 @@ const MachinesPage = () => {
   )
 
   const rightContent = (
-    <MuscleDiagram />
+    <ImageMuscleDiagram />
   )
 
   return (
