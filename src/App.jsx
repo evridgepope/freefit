@@ -10,6 +10,7 @@ import './styles/App.css'
 function App() {
   const [activeTab, setActiveTab] = useState('exercises')
   const [isLoading, setIsLoading] = useState(true)
+  const [selectedExerciseId, setSelectedExerciseId] = useState(null)
 
   useEffect(() => {
     const initApp = async () => {
@@ -19,12 +20,22 @@ function App() {
     initApp()
   }, [])
 
+  const navigateToExercise = (exerciseId) => {
+    setSelectedExerciseId(exerciseId)
+    setActiveTab('exercises')
+  }
+
   const renderPage = () => {
     switch (activeTab) {
       case 'exercises':
-        return <ExercisesPage />
+        return (
+          <ExercisesPage
+            preSelectedExerciseId={selectedExerciseId}
+            onExerciseSelected={() => setSelectedExerciseId(null)}
+          />
+        )
       case 'machines':
-        return <MachinesPage />
+        return <MachinesPage onExerciseClick={navigateToExercise} />
       case 'routines':
         return <RoutinesPage />
       case 'nutrition':

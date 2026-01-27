@@ -1,15 +1,21 @@
 import { useState, useEffect } from 'react'
 import SplitLayout from '../components/SplitLayout'
 import ImageMuscleDiagram from '../components/ImageMuscleDiagram'
-import { getAllMachines, getAllExercises } from '../utils/db'
+import { getAllMachines, getAllExercises, addMachine, updateMachine, deleteMachine } from '../utils/db'
 import { getSelectedMachines, setSelectedMachines } from '../utils/storage'
+import { generateId } from '../utils/helpers'
 import './MachinesPage.css'
 
-const MachinesPage = () => {
+const MachinesPage = ({ onExerciseClick }) => {
   const [machines, setMachines] = useState([])
   const [exercises, setExercises] = useState([])
   const [selectedMachines, setSelectedMachinesState] = useState([])
   const [infoMachine, setInfoMachine] = useState(null)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingMachine, setEditingMachine] = useState(null)
+  const [newMachineName, setNewMachineName] = useState('')
+  const [selectedExercises, setSelectedExercises] = useState([])
 
   useEffect(() => {
     loadData()
@@ -49,10 +55,94 @@ const MachinesPage = () => {
     )
   }
 
+  const handleCreateMachine = async () => {
+    if (!newMachineName.trim()) {
+      alert('Please enter a machine name')
+      return
+    }
+
+    const newMachine = {
+      id: generateId(),
+      name: newMachineName.trim(),
+      isCustom: true,
+      variants: [],
+      examplePhotos: [],
+      compatibleExercises: selectedExercises
+    }
+
+    await addMachine(newMachine)
+    await loadData()
+
+    // Reset form and close modal
+    setNewMachineName('')
+    setSelectedExercises([])
+    setShowCreateModal(false)
+  }
+
+  const handleEditClick = (e, machine) => {
+    e.stopPropagation()
+    setEditingMachine(machine)
+    setNewMachineName(machine.name)
+    setSelectedExercises(machine.compatibleExercises || [])
+    setShowEditModal(true)
+  }
+
+  const handleUpdateMachine = async () => {
+    if (!newMachineName.trim()) {
+      alert('Please enter a machine name')
+      return
+    }
+
+    const updatedMachine = {
+      ...editingMachine,
+      name: newMachineName.trim(),
+      compatibleExercises: selectedExercises
+    }
+
+    await updateMachine(updatedMachine)
+    await loadData()
+
+    // Reset form and close modal
+    setNewMachineName('')
+    setSelectedExercises([])
+    setEditingMachine(null)
+    setShowEditModal(false)
+  }
+
+  const handleDeleteMachine = async (machine) => {
+    if (!machine.isCustom) {
+      alert('Cannot delete standard machines. You can only delete custom machines you created.')
+      return
+    }
+
+    if (!window.confirm(`Delete "${machine.name}"? This cannot be undone.`)) {
+      return
+    }
+
+    await deleteMachine(machine.id)
+    await loadData()
+    setShowEditModal(false)
+    setEditingMachine(null)
+  }
+
+  const toggleExerciseSelection = (exerciseId) => {
+    setSelectedExercises(prev =>
+      prev.includes(exerciseId)
+        ? prev.filter(id => id !== exerciseId)
+        : [...prev, exerciseId]
+    )
+  }
+
   const leftContent = (
     <div className="machines-list">
       <div className="page-header">
         <h1>Machines</h1>
+        <button
+          className="add-btn-header"
+          onClick={() => setShowCreateModal(true)}
+        >
+          +
+        </button>
       </div>
 
       <div className="machine-count">
@@ -67,22 +157,34 @@ const MachinesPage = () => {
             onClick={() => toggleMachine(machine.id)}
           >
             <div className="machine-checkbox">
-              {selectedMachines.includes(machine.id) ? '✓' : '○'}
+              {selectedMachines.includes(machine.id) ? '[X]' : '[ ]'}
             </div>
             <div className="machine-info">
-              <div className="machine-name">{machine.name}</div>
-              {machine.variants && machine.variants.length > 0 && (
+              <div className="machine-name">
+                {machine.name}
+                {machine.isCustom && <span className="custom-badge">Custom</span>}
+              </div>
+              {machine.compatibleExercises && machine.compatibleExercises.length > 0 && (
                 <div className="machine-variants">
-                  {machine.variants.length} variant{machine.variants.length > 1 ? 's' : ''}
+                  {machine.compatibleExercises.length} exercise{machine.compatibleExercises.length !== 1 ? 's' : ''}
                 </div>
               )}
             </div>
-            <button
-              className="info-btn"
-              onClick={(e) => handleInfoClick(e, machine)}
-            >
-              ℹ️
-            </button>
+            <div className="machine-actions">
+              <button
+                className="edit-icon-btn"
+                onClick={(e) => handleEditClick(e, machine)}
+                title="Edit"
+              >
+                Edit
+              </button>
+              <button
+                className="info-btn"
+                onClick={(e) => handleInfoClick(e, machine)}
+              >
+                Info
+              </button>
+            </div>
           </div>
         ))}
       </div>
@@ -124,7 +226,16 @@ const MachinesPage = () => {
                 <div className="exercises-list-modal">
                   {getCompatibleExercises(infoMachine).length > 0 ? (
                     getCompatibleExercises(infoMachine).map(exercise => (
-                      <div key={exercise.id} className="exercise-item-modal">
+                      <div
+                        key={exercise.id}
+                        className="exercise-item-modal clickable"
+                        onClick={() => {
+                          if (onExerciseClick) {
+                            closeInfo()
+                            onExerciseClick(exercise.id)
+                          }
+                        }}
+                      >
                         <div className="exercise-name-modal">{exercise.name}</div>
                         <div className="exercise-meta-modal">
                           {exercise.type} • {exercise.category}
@@ -136,6 +247,139 @@ const MachinesPage = () => {
                   )}
                 </div>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Create Machine Modal */}
+      {showCreateModal && (
+        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+          <div className="modal-content-create" onClick={(e) => e.stopPropagation()}>
+            <h2>Add Custom Machine</h2>
+
+            <div className="modal-form">
+              <label>Machine Name</label>
+              <input
+                type="text"
+                value={newMachineName}
+                onChange={(e) => setNewMachineName(e.target.value)}
+                placeholder="e.g., Leg Press Machine"
+                className="text-input"
+              />
+
+              <label>Compatible Exercises (Optional)</label>
+              <div className="exercise-selection-list">
+                {exercises.length > 0 ? (
+                  exercises.map(exercise => (
+                    <div
+                      key={exercise.id}
+                      className={`exercise-select-item ${selectedExercises.includes(exercise.id) ? 'selected' : ''}`}
+                      onClick={() => toggleExerciseSelection(exercise.id)}
+                    >
+                      <div className="exercise-select-checkbox">
+                        {selectedExercises.includes(exercise.id) ? '[X]' : '[ ]'}
+                      </div>
+                      <div className="exercise-select-info">
+                        <div className="exercise-select-name">{exercise.name}</div>
+                        <div className="exercise-select-meta">{exercise.type} • {exercise.category}</div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-exercises">No exercises available</p>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  setShowCreateModal(false)
+                  setNewMachineName('')
+                  setSelectedExercises([])
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleCreateMachine}
+              >
+                Create Machine
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Machine Modal */}
+      {showEditModal && editingMachine && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal-content-create" onClick={(e) => e.stopPropagation()}>
+            <h2>Edit Machine</h2>
+
+            <div className="modal-form">
+              <label>Machine Name</label>
+              <input
+                type="text"
+                value={newMachineName}
+                onChange={(e) => setNewMachineName(e.target.value)}
+                placeholder="e.g., Leg Press Machine"
+                className="text-input"
+              />
+
+              <label>Compatible Exercises</label>
+              <div className="exercise-selection-list">
+                {exercises.length > 0 ? (
+                  exercises.map(exercise => (
+                    <div
+                      key={exercise.id}
+                      className={`exercise-select-item ${selectedExercises.includes(exercise.id) ? 'selected' : ''}`}
+                      onClick={() => toggleExerciseSelection(exercise.id)}
+                    >
+                      <div className="exercise-select-checkbox">
+                        {selectedExercises.includes(exercise.id) ? '[X]' : '[ ]'}
+                      </div>
+                      <div className="exercise-select-info">
+                        <div className="exercise-select-name">{exercise.name}</div>
+                        <div className="exercise-select-meta">{exercise.type} • {exercise.category}</div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <p className="no-exercises">No exercises available</p>
+                )}
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              {editingMachine.isCustom && (
+                <button
+                  className="btn-destructive"
+                  onClick={() => handleDeleteMachine(editingMachine)}
+                >
+                  Delete
+                </button>
+              )}
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  setShowEditModal(false)
+                  setEditingMachine(null)
+                  setNewMachineName('')
+                  setSelectedExercises([])
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleUpdateMachine}
+              >
+                Save
+              </button>
             </div>
           </div>
         </div>

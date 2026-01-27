@@ -91,15 +91,27 @@
 }
 
 /* Highlighted state (muscle is worked by selected exercise) */
-.muscle-overlay.highlighted {
+.muscle-overlay.highlighted:not(.gradient) {
   background-color: rgba(255, 59, 48, 0.35);
   border-color: rgba(255, 59, 48, 0.6);
   box-shadow: inset 0 0 20px rgba(255, 59, 48, 0.3);
 }
 
-.muscle-overlay.highlighted:hover {
+.muscle-overlay.highlighted:not(.gradient):hover {
   background-color: rgba(255, 59, 48, 0.45);
   border-color: rgba(255, 59, 48, 0.8);
+}
+
+/* Gradient state (volume-based highlighting) */
+.muscle-overlay.gradient {
+  /* Background color set inline via style attribute */
+  box-shadow: inset 0 0 10px rgba(0, 122, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.muscle-overlay.gradient:hover {
+  transform: scale(1.02);
+  filter: brightness(1.2);
 }
 
 /* Selected state (muscle is clicked for filtering) */

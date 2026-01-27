@@ -94,6 +94,7 @@
   border-radius: 4px;
 }
 
+.edit-btn-icon,
 .delete-btn-icon {
   background: none;
   border: none;
@@ -103,6 +104,7 @@
   transition: opacity 0.2s;
 }
 
+.edit-btn-icon:active,
 .delete-btn-icon:active {
   opacity: 1;
 }
@@ -113,13 +115,38 @@
   border-bottom: 1px solid var(--border-color);
 }
 
+.volume-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
 .volume-summary h3 {
   font-size: 14px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.5px;
   color: var(--text-secondary);
-  margin-bottom: 12px;
+  margin: 0;
+}
+
+.granularity-toggle {
+  padding: 4px 10px;
+  background-color: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--primary-color);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.granularity-toggle:active {
+  transform: scale(0.95);
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .volume-list {
@@ -213,9 +240,17 @@
 }
 
 .exercise-item-day {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
   padding: 12px;
   background-color: var(--secondary-background);
   border-radius: 8px;
+  position: relative;
+}
+
+.exercise-info-day {
+  flex: 1;
 }
 
 .exercise-name-day {
@@ -224,9 +259,57 @@
   margin-bottom: 4px;
 }
 
-.exercise-sets-day {
+.exercise-meta-day {
   font-size: 13px;
   color: var(--text-secondary);
+}
+
+.settings-btn {
+  background: none;
+  border: none;
+  font-size: 20px;
+  padding: 8px;
+  opacity: 0.6;
+  transition: opacity 0.2s;
+  cursor: pointer;
+}
+
+.settings-btn:active {
+  opacity: 1;
+}
+
+.edit-menu {
+  position: absolute;
+  right: 12px;
+  top: 50px;
+  background-color: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 100;
+  overflow: hidden;
+}
+
+.edit-menu button {
+  display: block;
+  width: 120px;
+  padding: 12px 16px;
+  border: none;
+  background: none;
+  text-align: left;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.edit-menu button:last-child {
+  border-bottom: none;
+}
+
+.edit-menu button:active {
+  background-color: var(--secondary-background);
 }
 
 .empty-state-small {
@@ -419,4 +502,163 @@
 
 .add-set-btn:active {
   transform: scale(0.98);
+}
+
+/* Filter toggle */
+.filter-toggle {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+
+.filter-btn {
+  padding: 6px 12px;
+  background-color: var(--secondary-background);
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.filter-btn:active {
+  transform: scale(0.95);
+}
+
+/* Machine select */
+.machine-select {
+  width: 100%;
+  font-size: 16px;
+  padding: 12px;
+  border: 2px solid var(--border-color);
+  border-radius: 8px;
+  background-color: var(--background);
+  color: var(--text-primary);
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.machine-select:focus {
+  border-color: var(--primary-color);
+  outline: none;
+}
+
+/* Warning text */
+.warning-text {
+  margin-top: 12px;
+  padding: 12px;
+  background-color: rgba(255, 59, 48, 0.1);
+  border-left: 3px solid var(--error-color);
+  border-radius: 6px;
+  font-size: 13px;
+  color: var(--error-color);
+  font-weight: 500;
+}
+
+/* Exercise selector overlay (side-by-side layout) */
+.exercise-selector-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: var(--nav-height);
+  background-color: rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  display: flex;
+}
+
+.exercise-selector-panel {
+  width: 60%;
+  background-color: var(--background);
+  display: flex;
+  flex-direction: column;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+}
+
+.diagram-overlay-right {
+  width: 40%;
+  background-color: rgba(0, 0, 0, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+/* Exercise filters */
+.exercise-filters {
+  padding: 16px;
+  background-color: var(--secondary-background);
+  border-bottom: 1px solid var(--border-color);
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.filter-row:last-child {
+  margin-bottom: 0;
+}
+
+.filter-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary);
+  min-width: 70px;
+}
+
+.filter-chips-inline {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.filter-chip-small {
+  padding: 6px 14px;
+  background-color: var(--background);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-primary);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-chip-small.active {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.filter-chip-small:active {
+  transform: scale(0.95);
+}
+
+.clear-filters-btn {
+  margin-top: 12px;
+  width: 100%;
+  padding: 8px;
+  background-color: transparent;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.clear-filters-btn:active {
+  background-color: var(--secondary-background);
 }

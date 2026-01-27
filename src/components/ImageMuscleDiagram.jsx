@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import './ImageMuscleDiagram.css'
 
-const ImageMuscleDiagram = ({ highlightedMuscles = [], onMuscleClick, selectedMuscle }) => {
+const ImageMuscleDiagram = ({ highlightedMuscles = [], volumeMap = {}, onMuscleClick, selectedMuscle, showGradient = false }) => {
   const [view, setView] = useState('front')
 
   // Muscle region coordinates (percentage-based for responsive scaling)
@@ -156,6 +156,27 @@ const ImageMuscleDiagram = ({ highlightedMuscles = [], onMuscleClick, selectedMu
     }
   }
 
+  // Calculate gradient intensity based on volume
+  const getVolumeIntensity = (muscleId) => {
+    if (!showGradient || Object.keys(volumeMap).length === 0) {
+      return null
+    }
+
+    const volume = volumeMap[muscleId] || 0
+    if (volume === 0) return null
+
+    const maxVolume = Math.max(...Object.values(volumeMap))
+    const minVolume = Math.min(...Object.values(volumeMap).filter(v => v > 0))
+
+    // Normalize to 0.3-1.0 range (30%-100% opacity for better visibility)
+    if (maxVolume === minVolume) {
+      return 0.7 // If all muscles have same volume, use medium intensity
+    }
+
+    const normalized = (volume - minVolume) / (maxVolume - minVolume)
+    return 0.3 + (normalized * 0.7)
+  }
+
   const currentRegions = muscleRegions[view]
 
   // Render muscle region overlays
@@ -163,6 +184,21 @@ const ImageMuscleDiagram = ({ highlightedMuscles = [], onMuscleClick, selectedMu
     return Object.entries(currentRegions).map(([muscleId, region]) => {
       const isHigh = isHighlighted(muscleId)
       const isSel = isSelected(muscleId)
+      const intensity = getVolumeIntensity(muscleId)
+
+      const getOverlayStyle = (positioning) => {
+        const baseStyle = {
+          ...positioning,
+        }
+
+        // Apply gradient highlighting if enabled
+        if (intensity !== null) {
+          baseStyle.backgroundColor = `rgba(0, 122, 255, ${intensity})`
+          baseStyle.border = `1px solid rgba(0, 122, 255, ${Math.min(intensity + 0.2, 1)})`
+        }
+
+        return baseStyle
+      }
 
       // For bilateral muscles (side: 'both'), render two overlays
       if (region.side === 'both') {
@@ -170,25 +206,25 @@ const ImageMuscleDiagram = ({ highlightedMuscles = [], onMuscleClick, selectedMu
           <div key={muscleId}>
             {/* Left side */}
             <div
-              className={`muscle-overlay ${isHigh ? 'highlighted' : ''} ${isSel ? 'selected' : ''}`}
-              style={{
+              className={`muscle-overlay ${isHigh ? 'highlighted' : ''} ${isSel ? 'selected' : ''} ${intensity ? 'gradient' : ''}`}
+              style={getOverlayStyle({
                 left: `${region.x}%`,
                 top: `${region.y}%`,
                 width: `${region.width}%`,
                 height: `${region.height}%`,
-              }}
+              })}
               onClick={() => handleMuscleClick(muscleId)}
               title={region.name}
             />
             {/* Right side (mirrored) */}
             <div
-              className={`muscle-overlay ${isHigh ? 'highlighted' : ''} ${isSel ? 'selected' : ''}`}
-              style={{
+              className={`muscle-overlay ${isHigh ? 'highlighted' : ''} ${isSel ? 'selected' : ''} ${intensity ? 'gradient' : ''}`}
+              style={getOverlayStyle({
                 right: `${region.x}%`,
                 top: `${region.y}%`,
                 width: `${region.width}%`,
                 height: `${region.height}%`,
-              }}
+              })}
               onClick={() => handleMuscleClick(muscleId)}
               title={region.name}
             />
@@ -200,13 +236,13 @@ const ImageMuscleDiagram = ({ highlightedMuscles = [], onMuscleClick, selectedMu
       return (
         <div
           key={muscleId}
-          className={`muscle-overlay ${isHigh ? 'highlighted' : ''} ${isSel ? 'selected' : ''}`}
-          style={{
+          className={`muscle-overlay ${isHigh ? 'highlighted' : ''} ${isSel ? 'selected' : ''} ${intensity ? 'gradient' : ''}`}
+          style={getOverlayStyle({
             left: `${region.x}%`,
             top: `${region.y}%`,
             width: `${region.width}%`,
             height: `${region.height}%`,
-          }}
+          })}
           onClick={() => handleMuscleClick(muscleId)}
           title={region.name}
         />

@@ -2,10 +2,10 @@ import './BottomNav.css'
 
 const BottomNav = ({ activeTab, onTabChange }) => {
   const tabs = [
-    { id: 'exercises', label: 'Exercises', icon: '💪' },
-    { id: 'machines', label: 'Machines', icon: '🏋️' },
-    { id: 'routines', label: 'Routines', icon: '📋' },
-    { id: 'nutrition', label: 'Nutrition', icon: '🍎' }
+    { id: 'exercises', label: 'Exercises' },
+    { id: 'machines', label: 'Machines' },
+    { id: 'routines', label: 'Routines' },
+    { id: 'nutrition', label: 'Nutrition' }
   ]
 
   return (
@@ -16,7 +16,6 @@ const BottomNav = ({ activeTab, onTabChange }) => {
           className={`nav-tab ${activeTab === tab.id ? 'active' : ''}`}
           onClick={() => onTabChange(tab.id)}
         >
-          <span className="nav-icon">{tab.icon}</span>
           <span className="nav-label">{tab.label}</span>
         </button>
       ))}

@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react'
 import SplitLayout from '../components/SplitLayout'
 import ImageMuscleDiagram from '../components/ImageMuscleDiagram'
-import { getAllExercises, getAllMachines } from '../utils/db'
+import { getAllExercises, getAllMachines, addExercise, updateExercise, deleteExercise } from '../utils/db'
 import { getSelectedMachines } from '../utils/storage'
-import { formatMuscleName } from '../utils/helpers'
+import { formatMuscleName, generateId, MUSCLE_GROUPS } from '../utils/helpers'
 import './ExercisesPage.css'
 
-const ExercisesPage = () => {
+const ExercisesPage = ({ preSelectedExerciseId, onExerciseSelected }) => {
   const [exercises, setExercises] = useState([])
   const [machines, setMachines] = useState([])
   const [selectedExercise, setSelectedExercise] = useState(null)
@@ -18,6 +18,18 @@ const ExercisesPage = () => {
     category: null // 'compound' or 'isolation'
   })
   const [showFilters, setShowFilters] = useState(false)
+  const [showCreateModal, setShowCreateModal] = useState(false)
+  const [showEditModal, setShowEditModal] = useState(false)
+  const [editingExercise, setEditingExercise] = useState(null)
+  const [formData, setFormData] = useState({
+    name: '',
+    type: 'dynamic',
+    category: 'compound',
+    primaryMuscles: [],
+    secondaryMuscles: [],
+    compatibleMachines: [],
+    instructions: ''
+  })
 
   useEffect(() => {
     loadData()
@@ -26,6 +38,18 @@ const ExercisesPage = () => {
   useEffect(() => {
     applyFilters()
   }, [exercises, filters])
+
+  useEffect(() => {
+    if (preSelectedExerciseId && exercises.length > 0) {
+      const exercise = exercises.find(ex => ex.id === preSelectedExerciseId)
+      if (exercise) {
+        setSelectedExercise(exercise)
+        if (onExerciseSelected) {
+          onExerciseSelected()
+        }
+      }
+    }
+  }, [preSelectedExerciseId, exercises, onExerciseSelected])
 
   const loadData = async () => {
     const exerciseData = await getAllExercises()
@@ -100,6 +124,114 @@ const ExercisesPage = () => {
     setSelectedExercise(null)
   }
 
+  const resetForm = () => {
+    setFormData({
+      name: '',
+      type: 'dynamic',
+      category: 'compound',
+      primaryMuscles: [],
+      secondaryMuscles: [],
+      compatibleMachines: [],
+      instructions: ''
+    })
+  }
+
+  const handleCreateExercise = async () => {
+    if (!formData.name.trim()) {
+      alert('Please enter an exercise name')
+      return
+    }
+
+    const newExercise = {
+      id: generateId(),
+      ...formData,
+      name: formData.name.trim(),
+      instructions: formData.instructions.trim(),
+      isCustom: true
+    }
+
+    await addExercise(newExercise)
+    await loadData()
+    resetForm()
+    setShowCreateModal(false)
+  }
+
+  const handleEditClick = (exercise) => {
+    if (exercise.isCustom) {
+      setEditingExercise(exercise)
+      setFormData({
+        name: exercise.name,
+        type: exercise.type,
+        category: exercise.category,
+        primaryMuscles: exercise.primaryMuscles || [],
+        secondaryMuscles: exercise.secondaryMuscles || [],
+        compatibleMachines: exercise.compatibleMachines || [],
+        instructions: exercise.instructions || ''
+      })
+      setShowEditModal(true)
+    }
+  }
+
+  const handleUpdateExercise = async () => {
+    if (!formData.name.trim()) {
+      alert('Please enter an exercise name')
+      return
+    }
+
+    const updatedExercise = {
+      ...editingExercise,
+      ...formData,
+      name: formData.name.trim(),
+      instructions: formData.instructions.trim()
+    }
+
+    await updateExercise(updatedExercise)
+    await loadData()
+    resetForm()
+    setEditingExercise(null)
+    setShowEditModal(false)
+    setSelectedExercise(null)
+  }
+
+  const handleDeleteExercise = async (exercise) => {
+    if (!window.confirm(`Delete "${exercise.name}"? This cannot be undone.`)) {
+      return
+    }
+
+    await deleteExercise(exercise.id)
+    await loadData()
+    setShowEditModal(false)
+    setEditingExercise(null)
+    setSelectedExercise(null)
+  }
+
+  const toggleMuscleSelection = (muscleId, isPrimary) => {
+    const field = isPrimary ? 'primaryMuscles' : 'secondaryMuscles'
+    setFormData(prev => ({
+      ...prev,
+      [field]: prev[field].includes(muscleId)
+        ? prev[field].filter(id => id !== muscleId)
+        : [...prev[field], muscleId]
+    }))
+  }
+
+  const toggleMachineSelection = (machineId) => {
+    setFormData(prev => ({
+      ...prev,
+      compatibleMachines: prev.compatibleMachines.includes(machineId)
+        ? prev.compatibleMachines.filter(id => id !== machineId)
+        : [...prev.compatibleMachines, machineId]
+    }))
+  }
+
+  const getAllMuscles = () => {
+    const allMuscles = []
+    Object.values(MUSCLE_GROUPS).forEach(muscles => {
+      allMuscles.push(...muscles)
+    })
+    return allMuscles
+  }
+
   const getHighlightedMuscles = () => {
     if (!selectedExercise) return []
     return [
@@ -109,11 +241,11 @@ const ExercisesPage = () => {
   }
 
   const getExerciseIcon = (type) => {
-    return type === 'dynamic' ? '🏃' : '⏱️'
+    return type === 'dynamic' ? 'D' : 'S'
   }
 
   const getCategoryIcon = (category) => {
-    return category === 'compound' ? '🔗' : '🎯'
+    return category === 'compound' ? 'C' : 'I'
   }
 
   const activeFilterCount = () => {
@@ -131,10 +263,16 @@ const ExercisesPage = () => {
         <h1>Exercises</h1>
         <div className="header-actions">
           <button
+            className="add-btn-header"
+            onClick={() => setShowCreateModal(true)}
+          >
+            +
+          </button>
+          <button
             className={`filter-btn ${showFilters || activeFilterCount() > 0 ? 'active' : ''}`}
             onClick={() => setShowFilters(!showFilters)}
           >
-            🔍 {activeFilterCount() > 0 ? `(${activeFilterCount()})` : ''}
+            Filter {activeFilterCount() > 0 ? `(${activeFilterCount()})` : ''}
           </button>
         </div>
       </div>
@@ -148,13 +286,13 @@ const ExercisesPage = () => {
                 className={`filter-chip ${filters.type === 'dynamic' ? 'active' : ''}`}
                 onClick={() => toggleFilter('type', 'dynamic')}
               >
-                🏃 Dynamic
+                Dynamic
               </button>
               <button
                 className={`filter-chip ${filters.type === 'static' ? 'active' : ''}`}
                 onClick={() => toggleFilter('type', 'static')}
               >
-                ⏱️ Static
+                Static
               </button>
             </div>
           </div>
@@ -166,13 +304,13 @@ const ExercisesPage = () => {
                 className={`filter-chip ${filters.category === 'compound' ? 'active' : ''}`}
                 onClick={() => toggleFilter('category', 'compound')}
               >
-                🔗 Compound
+                Compound
               </button>
               <button
                 className={`filter-chip ${filters.category === 'isolation' ? 'active' : ''}`}
                 onClick={() => toggleFilter('category', 'isolation')}
               >
-                🎯 Isolation
+                Isolation
               </button>
             </div>
           </div>
@@ -198,7 +336,23 @@ const ExercisesPage = () => {
           >
             <div className="exercise-content">
               <div className="exercise-header">
-                <div className="exercise-name">{exercise.name}</div>
+                <div className="exercise-name-container">
+                  <div className="exercise-name">
+                    {exercise.name}
+                    {exercise.isCustom && <span className="custom-badge">Custom</span>}
+                  </div>
+                  {exercise.isCustom && selectedExercise?.id === exercise.id && (
+                    <button
+                      className="edit-exercise-btn"
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        handleEditClick(exercise)
+                      }}
+                    >
+                      Edit
+                    </button>
+                  )}
+                </div>
                 <div className="exercise-meta">
                   {getExerciseIcon(exercise.type)} {exercise.type} • {getCategoryIcon(exercise.category)} {exercise.category}
                 </div>
@@ -262,7 +416,6 @@ const ExercisesPage = () => {
 
         {filteredExercises.length === 0 && (
           <div className="empty-state">
-            <div className="empty-icon">🔍</div>
             <p className="empty-text">No exercises found</p>
             <p className="empty-hint">Try adjusting your filters</p>
           </div>
@@ -279,7 +432,268 @@ const ExercisesPage = () => {
     />
   )
 
-  return <SplitLayout leftContent={leftContent} rightContent={rightContent} />
+  return (
+    <>
+      <SplitLayout leftContent={leftContent} rightContent={rightContent} />
+
+      {/* Create Exercise Modal */}
+      {showCreateModal && (
+        <div className="modal-overlay" onClick={() => setShowCreateModal(false)}>
+          <div className="modal-content-exercise-form" onClick={(e) => e.stopPropagation()}>
+            <h2>Create Custom Exercise</h2>
+
+            <div className="modal-form-scroll">
+              <div className="form-group">
+                <label>Exercise Name *</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  placeholder="e.g., Bulgarian Split Squat"
+                  className="text-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Type *</label>
+                  <select
+                    value={formData.type}
+                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                    className="select-input"
+                  >
+                    <option value="dynamic">Dynamic</option>
+                    <option value="static">Static</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Category *</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="select-input"
+                  >
+                    <option value="compound">Compound</option>
+                    <option value="isolation">Isolation</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Primary Muscles *</label>
+                <div className="muscle-selection">
+                  {getAllMuscles().map(muscleId => (
+                    <button
+                      key={muscleId}
+                      className={`muscle-select-btn ${formData.primaryMuscles.includes(muscleId) ? 'selected' : ''}`}
+                      onClick={() => toggleMuscleSelection(muscleId, true)}
+                    >
+                      {formatMuscleName(muscleId)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Secondary Muscles (Optional)</label>
+                <div className="muscle-selection">
+                  {getAllMuscles().map(muscleId => (
+                    <button
+                      key={muscleId}
+                      className={`muscle-select-btn ${formData.secondaryMuscles.includes(muscleId) ? 'selected' : ''}`}
+                      onClick={() => toggleMuscleSelection(muscleId, false)}
+                    >
+                      {formatMuscleName(muscleId)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Compatible Machines (Optional)</label>
+                <div className="machine-selection">
+                  {machines.map(machine => (
+                    <div
+                      key={machine.id}
+                      className={`machine-select-item ${formData.compatibleMachines.includes(machine.id) ? 'selected' : ''}`}
+                      onClick={() => toggleMachineSelection(machine.id)}
+                    >
+                      <div className="machine-select-checkbox">
+                        {formData.compatibleMachines.includes(machine.id) ? '[X]' : '[ ]'}
+                      </div>
+                      <div className="machine-select-name">{machine.name}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Instructions (Optional)</label>
+                <textarea
+                  value={formData.instructions}
+                  onChange={(e) => setFormData({...formData, instructions: e.target.value})}
+                  placeholder="Brief description of how to perform the exercise..."
+                  className="textarea-input"
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  setShowCreateModal(false)
+                  resetForm()
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleCreateExercise}
+              >
+                Create Exercise
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit Exercise Modal */}
+      {showEditModal && editingExercise && (
+        <div className="modal-overlay" onClick={() => setShowEditModal(false)}>
+          <div className="modal-content-exercise-form" onClick={(e) => e.stopPropagation()}>
+            <h2>Edit Exercise</h2>
+
+            <div className="modal-form-scroll">
+              <div className="form-group">
+                <label>Exercise Name *</label>
+                <input
+                  type="text"
+                  value={formData.name}
+                  onChange={(e) => setFormData({...formData, name: e.target.value})}
+                  placeholder="e.g., Bulgarian Split Squat"
+                  className="text-input"
+                />
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label>Type *</label>
+                  <select
+                    value={formData.type}
+                    onChange={(e) => setFormData({...formData, type: e.target.value})}
+                    className="select-input"
+                  >
+                    <option value="dynamic">Dynamic</option>
+                    <option value="static">Static</option>
+                  </select>
+                </div>
+
+                <div className="form-group">
+                  <label>Category *</label>
+                  <select
+                    value={formData.category}
+                    onChange={(e) => setFormData({...formData, category: e.target.value})}
+                    className="select-input"
+                  >
+                    <option value="compound">Compound</option>
+                    <option value="isolation">Isolation</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Primary Muscles *</label>
+                <div className="muscle-selection">
+                  {getAllMuscles().map(muscleId => (
+                    <button
+                      key={muscleId}
+                      className={`muscle-select-btn ${formData.primaryMuscles.includes(muscleId) ? 'selected' : ''}`}
+                      onClick={() => toggleMuscleSelection(muscleId, true)}
+                    >
+                      {formatMuscleName(muscleId)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Secondary Muscles (Optional)</label>
+                <div className="muscle-selection">
+                  {getAllMuscles().map(muscleId => (
+                    <button
+                      key={muscleId}
+                      className={`muscle-select-btn ${formData.secondaryMuscles.includes(muscleId) ? 'selected' : ''}`}
+                      onClick={() => toggleMuscleSelection(muscleId, false)}
+                    >
+                      {formatMuscleName(muscleId)}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Compatible Machines (Optional)</label>
+                <div className="machine-selection">
+                  {machines.map(machine => (
+                    <div
+                      key={machine.id}
+                      className={`machine-select-item ${formData.compatibleMachines.includes(machine.id) ? 'selected' : ''}`}
+                      onClick={() => toggleMachineSelection(machine.id)}
+                    >
+                      <div className="machine-select-checkbox">
+                        {formData.compatibleMachines.includes(machine.id) ? '[X]' : '[ ]'}
+                      </div>
+                      <div className="machine-select-name">{machine.name}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label>Instructions (Optional)</label>
+                <textarea
+                  value={formData.instructions}
+                  onChange={(e) => setFormData({...formData, instructions: e.target.value})}
+                  placeholder="Brief description of how to perform the exercise..."
+                  className="textarea-input"
+                  rows={4}
+                />
+              </div>
+            </div>
+
+            <div className="modal-actions">
+              <button
+                className="btn-destructive"
+                onClick={() => handleDeleteExercise(editingExercise)}
+              >
+                Delete
+              </button>
+              <button
+                className="btn-secondary"
+                onClick={() => {
+                  setShowEditModal(false)
+                  setEditingExercise(null)
+                  resetForm()
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                className="btn-primary"
+                onClick={handleUpdateExercise}
+              >
+                Save
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+    </>
+  )
 }
 
 export default ExercisesPage

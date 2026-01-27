@@ -5,7 +5,8 @@ const STORAGE_KEYS = {
   LAST_BACKUP: 'lastBackup',
   UI_STATE: 'uiState',
   SELECTED_MACHINES: 'selectedMachines',
-  APP_INITIALIZED: 'appInitialized'
+  APP_INITIALIZED: 'appInitialized',
+  VOLUME_GRANULARITY: 'volumeGranularity'
 }
 
 // Nutrition Targets
@@ -62,4 +63,13 @@ export const getUIState = () => {
 
 export const setUIState = (state) => {
   localStorage.setItem(STORAGE_KEYS.UI_STATE, JSON.stringify(state))
+}
+
+// Volume Granularity Setting ('individual' or 'broad')
+export const getVolumeGranularity = () => {
+  return localStorage.getItem(STORAGE_KEYS.VOLUME_GRANULARITY) || 'individual'
+}
+
+export const setVolumeGranularity = (granularity) => {
+  localStorage.setItem(STORAGE_KEYS.VOLUME_GRANULARITY, granularity)
 }

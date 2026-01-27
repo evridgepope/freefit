@@ -102,3 +102,86 @@ export const formatMuscleName = (muscleId) => {
     .map(word => word.charAt(0).toUpperCase() + word.slice(1))
     .join(' ')
 }
+
+// Muscle group mappings
+export const MUSCLE_GROUPS = {
+  chest: [
+    'pectoralis_major_upper',
+    'pectoralis_major_lower',
+    'pectoralis_minor'
+  ],
+  back: [
+    'latissimus_dorsi',
+    'trapezius_upper',
+    'trapezius_middle',
+    'trapezius_lower',
+    'rhomboids',
+    'erector_spinae'
+  ],
+  shoulders: [
+    'anterior_deltoid',
+    'lateral_deltoid',
+    'posterior_deltoid'
+  ],
+  arms: [
+    'biceps_brachii',
+    'triceps_brachii',
+    'forearm_flexors',
+    'forearm_extensors'
+  ],
+  legs: [
+    'quadriceps',
+    'hamstrings',
+    'gluteus_maximus',
+    'gluteus_medius',
+    'gastrocnemius',
+    'soleus',
+    'hip_adductors',
+    'hip_abductors',
+    'tibialis_anterior'
+  ],
+  core: [
+    'rectus_abdominis',
+    'obliques_external',
+    'obliques_internal',
+    'transverse_abdominis'
+  ]
+}
+
+// Get broad muscle group for a specific muscle
+export const getBroadMuscleGroup = (muscleId) => {
+  for (const [group, muscles] of Object.entries(MUSCLE_GROUPS)) {
+    if (muscles.includes(muscleId)) {
+      return group
+    }
+  }
+  return null
+}
+
+// Group volume by broad muscle groups
+export const groupVolumeByBroadGroups = (volumeMap) => {
+  const grouped = {}
+
+  for (const [muscleId, volume] of Object.entries(volumeMap)) {
+    const group = getBroadMuscleGroup(muscleId)
+    if (group) {
+      grouped[group] = (grouped[group] || 0) + volume
+    }
+  }
+
+  return grouped
+}
+
+// Convert broad group volume back to individual muscles for display
+export const expandBroadGroupVolume = (broadGroupVolume) => {
+  const expanded = {}
+
+  for (const [group, volume] of Object.entries(broadGroupVolume)) {
+    const muscles = MUSCLE_GROUPS[group] || []
+    muscles.forEach(muscle => {
+      expanded[muscle] = volume
+    })
+  }
+
+  return expanded
+}

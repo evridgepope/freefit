@@ -891,14 +891,14 @@ app.listen(3000);
 
 ## Development Workflow
 
-### Phase 1: Basic Structure (Week 1)
+### Phase 1: Basic Structure
 - Set up React project with Create React App
 - Implement bottom navigation tabs
 - Create basic layouts for each tab
 - Set up LocalStorage/IndexedDB
 - Deploy static build to Raspberry Pi
 
-### Phase 2: Exercises & Machines (Week 2)
+### Phase 2: Exercises & Machines
 - Prepopulate exercise database (JSON file)
 - Prepopulate machine database (JSON file)
 - Implement exercise list with filtering
@@ -906,21 +906,21 @@ app.listen(3000);
 - Build muscle diagram (2D version first)
 - Connect muscle highlighting logic
 
-### Phase 3: Routines (Week 2-3)
+### Phase 3: Routines
 - Create routine CRUD operations
 - Build day/exercise structure
 - Implement volume calculations
 - Connect to muscle diagram
 - Add/edit/delete exercises in routine
 
-### Phase 4: Nutrition - Manual Entry (Week 3)
+### Phase 4: Nutrition - Manual Entry
 - Build food item library
 - Implement manual food entry
 - Create daily log view
 - Build summary view with progress bars
 - Build history view
 
-### Phase 5: AI Integration (Week 4)
+### Phase 5: AI Integration
 - Set up Raspberry Pi server with Express
 - Create API proxy endpoints
 - Implement Claude API calls
@@ -928,7 +928,7 @@ app.listen(3000);
 - Add nutrition label OCR
 - Error handling and fallbacks
 
-### Phase 6: Polish & PWA Features (Week 4-5)
+### Phase 6: Polish & PWA Features
 - Add service worker for offline support
 - Create app icons and manifest
 - Implement backup system
