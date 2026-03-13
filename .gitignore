@@ -12,6 +12,12 @@ dist
 dist-ssr
 *.local
 
+# Server environment variables (IMPORTANT!)
+server/.env
+
+# Server backups (optional - uncomment to exclude from git)
+# server/backups/*.json
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

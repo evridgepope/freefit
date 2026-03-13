@@ -1,0 +1,16 @@
+# Environment variables
+.env
+
+# Node modules
+node_modules/
+
+# Logs
+*.log
+npm-debug.log*
+
+# Backups (optional - comment out if you want to commit backups)
+backups/*.json
+
+# OS files
+.DS_Store
+Thumbs.db
